@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>  -->  
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="nhoodxcensus.geojson" type="text/javascript"></script>
+<!-- Create an element where the map will take place -->
+<div id="mapid"></div>
+
+<style>
+    #mapid {
+        height: 400px;
+    }
+
+
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    #map {
+        width: 600px;
+        height: 400px;
+    }
+
+</style>
+
+<script>
+    var map = L
+        .map('mapid')
+        .setView([42.9902, -88.2445], 10);
+    
+    map.createPane('labels');
+
+
+    map.getPane('labels').style.zIndex = 650;
+
+    map.getPane('labels').style.pointerEvents = 'none';
+
+    // Tile type: openstreetmap normal
+    var openstreetmap = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+        maxZoom: 20
+    })
+    
+
+    //Base layers definition and addition
+        var allOptions = {
+            "Open streetmap": openstreetmap,
+            // "Open streetmap: Hot": openstreetmapHot,
+            // "Open streetmap: Osm": openstreetmapOsm
+        };
+
+        // Initialize with openstreetmap
+        openstreetmap.addTo(map);
+
+        // Add baseLayers to map as control layers
+        L.control.layers(allOptions).addTo(map);
+
+    function getColor(d) {
+	return d > 73  ? '#FED976' :
+	       d > 70   ? '#E31A1C' :
+	       d > 65   ? '#BD0026' :
+	       d > 60   ? '#800026' :
+	                  '#FFEDA0';
+    }
+
+    function style(feature) {
+	return {
+		fillColor: getColor(feature.properties.MRR2010),
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 0.7
+	};
+}
+
+    L.geoJson(wisconsin_census, {style: style}).addTo(map);
+
+    var geojson = L.geoJson(wisconsin_census, { onEachFeature: function (feature, layer){
+            console.log(feature.properties);
+            layer.bindPopup('<h1> Tract: '+feature.properties.TRACTCE+'</h1><p>Hispanic Population: '+feature.properties.Hispanic+'</p>'+'</h1><p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>');
+
+    }}).addTo(map);
+
+    // geojson.eachLayer(function (layer) {
+    //         console.log(layer, 'helllo');
+    //         // layer.bindPopup(layer.properties.NAME);
+    //     });
+    
+    
+
+    map.fitBounds(geojson.getBounds());
+    
+    
+
+</script>
