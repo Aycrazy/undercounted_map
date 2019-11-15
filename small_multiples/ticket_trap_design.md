@@ -59,3 +59,8 @@ High Level:
 <u>Other Notes:</u>
 - Working backward help with db structure
   - "I simply wrote queries that described the way I wanted the data to be structured for the front end and worked backward to create the relational database structures to fulfill those queries."
+  - Services costing money
+    - AWS - RDS, Serverless, Lambda, Ec2 (? testing)
+  - How long does this need to last?  --> The fact that this effort is temporal, means it can live for a short time and maybe we can just throw some resources at fast development over cost-efficient development?
+  - With that said, can we simplify things by using heroku and ec2, as opposed to going serverless?  Pros /Cons?  --> how do we figure this out
+    - Reason being that ec2 and heroku could be quicker to stand up
