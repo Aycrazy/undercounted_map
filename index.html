@@ -7,6 +7,7 @@
 <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>  -->  
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="nhoodxcensus.geojson" type="text/javascript"></script>
+<script src="neighborhood.geojson" type="text/javascript"></script>
 <!-- Create an element where the map will take place -->
 <div id="mapid"></div>
 
@@ -30,7 +31,7 @@
 <script>
     var map = L
         .map('mapid')
-        .setView([42.9902, -88.2445], 10);
+        .setView([42.995, -88.2445], 10.2);
     
     map.createPane('labels');
 
@@ -66,35 +67,81 @@
 	       d > 65   ? '#BD0026' :
 	       d > 60   ? '#800026' :
 	                  '#FFEDA0';
-    }
+    };
 
     function style(feature) {
 	return {
 		fillColor: getColor(feature.properties.MRR2010),
+		weight: 1,
+		opacity: 1,
+		color: 'black',
+		dashArray: '3',
+        fillOpacity: 0.5,
+        zIndex: 10
+	};
+}
+
+    // L.geoJson(wisconsin_census, {}).addTo(map);
+    
+
+    function nstyle(feature) {
+	return {
+		fillColor: 'white',
 		weight: 2,
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: 0.7
+        fillOpacity: 0.0,
+        zIndex: 1
+        
 	};
-}
+    }
 
-    L.geoJson(wisconsin_census, {style: style}).addTo(map);
-
-    var geojson = L.geoJson(wisconsin_census, { onEachFeature: function (feature, layer){
+    function pstyle(feature) {
+	return {
+		fillColor: 'white',
+		weight: 2,
+		opacity: 0,
+		color: 'white',
+		dashArray: '0',
+        fillOpacity: 0.0,
+        zIndex: 100
+        
+	};
+    }
+    
+    var geojson = L.geoJson(wisconsin_census, {style: style, onEachFeature: function (feature, layer){
             console.log(feature.properties);
-            layer.bindPopup('<h1> Tract: '+feature.properties.TRACTCE+'</h1><p>Hispanic Population: '+feature.properties.Hispanic+'</p>'+'</h1><p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>');
 
     }}).addTo(map);
 
-    // geojson.eachLayer(function (layer) {
+    // console.log(geojson.getPanes)
+
+    var geojsonLayer = L.geoJson(neighborhood, {style: nstyle});
+
+    var controlLayers = L.control.layers().addTo(map)
+  // Add the geojson layer to the layercontrol
+    controlLayers.addOverlay(geojsonLayer, 'Neighobhrood Boundaries');
+
+    var popupLayer = L.geoJson(wisconsin_census,{style:pstyle,onEachFeature: function (feature, layer){
+            console.log(feature.properties);
+            layer.bindPopup('<h1> Tract: '+feature.properties.TRACTCE+
+                '</h1><p>Hispanic Population: '+feature.properties.Hispanic+
+                    '</p>'+'</h1><p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>');
+            layer.bringToFront();
+
+    }})
+
+    controlLayers.addOverlay(popupLayer,'Census Info by Tract')
+    // L.geoJson(neighborhood, {style: nstyle}, ).addTo(geojson);
+    // geojson.eachLayer(fnction (layer) {
     //         console.log(layer, 'helllo');
     //         // layer.bindPopup(layer.properties.NAME);
     //     });
     
     
 
-    map.fitBounds(geojson.getBounds());
+    // map.fitBounds(geojson.getBounds());
     
     
 

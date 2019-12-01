@@ -84,3 +84,4 @@ all_census_htc_info = convert_to_sf_type2(all_census_htc_info[pd.notnull(all_cen
 all_census_htc_info.to_file("/Users/ayaspan/Documents/Personal/leaflet_census_map/nhoodxcensus.geojson", driver='GeoJSON')
 
 #%%
+neighborhood_shp.to_file("neighborhood.geoJson", driver='GeoJSON')
