@@ -83,6 +83,7 @@ all_census_htc_info['NEIGHBORHD'] = all_census_htc_info.apply(lambda row: row['N
 
 all_census_htc_info = convert_to_sf_type2(all_census_htc_info[pd.notnull(all_census_htc_info.State)])
 
-all_census_htc_info.to_file("/Users/ayaspan/Documents/Personal/leaflet_census_map/nhoodxcensus.geojson", driver='GeoJSON')
+all_census_htc_info.to_file("nhoodxcensus.geojson", driver='GeoJSON')
 
 #%%
+nhood_shp.to_file("neighborhood.geoJson", driver='GeoJSON')
