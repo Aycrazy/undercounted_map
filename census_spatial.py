@@ -17,8 +17,8 @@ import warnings
 import json
 import psycopg2
 from bs4 import BeautifulSoup
-from dask import dataframe as dd
-from dask.multiprocessing import get
+#from dask import dataframe as dd
+#from dask.multiprocessing import get
 #from geoalchemy2 import Geometry, WKTElement
 from multiprocessing import cpu_count
 #from utils import *
@@ -39,7 +39,7 @@ def spatial_join(sf1, sf2):
 def spatial_join_type2(sf1, sf2):
     return gpd.sjoin(sf1,sf2, how='left', op='intersects')
 
-
+#%%
 
 census_df = gpd.read_file('tl_2018_55_tract/tl_2018_55_tract.shp')
 
@@ -52,6 +52,8 @@ nhood_shp = gpd.read_file(nhood_fp)
 
 
 nhood_shp = crs_transform(nhood_shp)
+
+#%%
 
 nhood_tract_join = spatial_join_type2(census_transformed,nhood_shp)
 
