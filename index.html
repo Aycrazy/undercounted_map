@@ -125,9 +125,14 @@
 
     var popupLayer = L.geoJson(wisconsin_census,{style:pstyle,onEachFeature: function (feature, layer){
             console.log(feature.properties);
-            layer.bindPopup('<h1> Tract: '+feature.properties.TRACTCE+
-                '</h1><p>Hispanic Population: '+feature.properties.Hispanic+
-                    '</p>'+'</h1><p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>');
+            layer.bindPopup('<p>Tract: '+feature.properties.TRACTCE+'</p>'+
+                '<p>Hispanic Population: '+feature.properties.Hispanic+'</p>'+
+                '<p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>' +
+                '<p>Mail Return Rate: ' + feature.properties.MRR2010 + '</p>'+
+                '<p>Total Under 5: ' + feature.properties.TOTUNDER5 + '</p>'+
+                '<p>Ltd Eng Prof Houses: ' + feature.properties.LEPHHS + '</p>' +
+                '<p>No Internet: ' + feature.properties.NOINTERNET + '</p>'
+                );
             layer.bringToFront();
 
     }})
