@@ -54,7 +54,7 @@ nhood_shp = gpd.read_file(nhood_fp)
 blockgroup_shp = gpd.read_file('Census_Block_Groups/Census_Block_Groups.shp')
 
 blockgroup_shp = crs_transform(blockgroup_shp)
-
+#%%
 
 #block_shp = gpd.read_file('')
 
