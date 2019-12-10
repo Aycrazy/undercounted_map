@@ -12,13 +12,13 @@ import pdb
 from shapely.geometry import Point, LineString, Polygon
 from shapely.wkt import loads
 from pyproj import Proj, transform
-from mke_geo import parallelize_dataframe, batch_geocode, geo_locate, splitDataFrameList
+#from mke_geo import parallelize_dataframe, batch_geocode, geo_locate, splitDataFrameList
 import warnings
 import json
-import psycopg2
-from bs4 import BeautifulSoup
-from dask import dataframe as dd
-from dask.multiprocessing import get
+#import psycopg2
+#from bs4 import BeautifulSoup
+#rom dask import dataframe as dd
+#from dask.multiprocessing import get
 #from geoalchemy2 import Geometry, WKTElement
 from multiprocessing import cpu_count
 #from utils import *
@@ -40,7 +40,7 @@ def spatial_join_type2(sf1, sf2):
     return gpd.sjoin(sf1,sf2, how='left', op='intersects')
 
 
-
+#%%
 census_df = gpd.read_file('tl_2018_55_tract/tl_2018_55_tract.shp')
 
 census_transformed = crs_transform(census_df)
@@ -49,6 +49,14 @@ census_transformed = crs_transform(census_df)
 nhood_fp = r'neighborhood/neighborhood.shp'
 
 nhood_shp = gpd.read_file(nhood_fp)
+
+#%%
+blockgroup_shp = gpd.read_file('Census_Block_Groups/Census_Block_Groups.shp')
+
+blockgroup_shp = crs_transform(blockgroup_shp)
+
+
+#block_shp = gpd.read_file('')
 
 
 nhood_shp = crs_transform(nhood_shp)
@@ -85,3 +93,7 @@ all_census_htc_info.to_file("/Users/ayaspan/Documents/Personal/leaflet_census_ma
 
 #%%
 neighborhood_shp.to_file("neighborhood.geoJson", driver='GeoJSON')
+
+#%%
+
+blockgroup_shp.to_file("blockgroup.geoJson", driver='GeoJSON')

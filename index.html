@@ -8,6 +8,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="nhoodxcensus.geojson" type="text/javascript"></script>
 <script src="neighborhood.geojson" type="text/javascript"></script>
+<script src="blockgroup.geoJson" type="text/javascript"></script>
 <!-- Create an element where the map will take place -->
 <div id="mapid"></div>
 
@@ -109,6 +110,19 @@
         
 	};
     }
+
+    function gstyle(feature) {
+                return {
+                    fillColor: 'white',
+                    weight: 2,
+                    opacity: 1,
+                    color: 'green',
+                    dashArray: '0',
+                    fillOpacity: 0.0,
+                    zIndex: 100
+
+                };
+            }
     
     var geojson = L.geoJson(wisconsin_census, {style: style, onEachFeature: function (feature, layer){
             console.log(feature.properties);
@@ -122,6 +136,9 @@
     var controlLayers = L.control.layers().addTo(map)
   // Add the geojson layer to the layercontrol
     controlLayers.addOverlay(geojsonLayer, 'Neighobhrood Boundaries');
+
+    var blockgroupjsonLayer = L.geoJson(blockgroup, { style: gstyle });
+
 
     var popupLayer = L.geoJson(wisconsin_census,{style:pstyle,onEachFeature: function (feature, layer){
             console.log(feature.properties);
@@ -138,6 +155,8 @@
     }})
 
     controlLayers.addOverlay(popupLayer,'Census Info by Tract')
+
+    controlLayers.addOverlay(blockgroupjsonLayer, 'Block Boundaries')
     // L.geoJson(neighborhood, {style: nstyle}, ).addTo(geojson);
     // geojson.eachLayer(fnction (layer) {
     //         console.log(layer, 'helllo');
