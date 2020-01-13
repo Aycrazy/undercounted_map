@@ -40,13 +40,25 @@ def spatial_join_type2(sf1, sf2):
     return gpd.sjoin(sf1,sf2, how='left', op='intersects')
 
 
+def create_portion_of_agg(df, perc_col, col_list, geo):
+
+    for col in col_list:
+        df[col+'_{0}_{1}'.format('prop',geo)] = df[perc_col]*df[col]
+
+
+#Census Tract to Neighborhood crosswalk
+#credit John Johnson
+#source: https://github.com/jdjohn215/Milwaukee-Geo-Crosswalks/blob/master/Crosswalks/2017CensusTracts_to_Neighborhoods.csv
+
+cross_df = pd.read_csv('https://raw.githubusercontent.com/jdjohn215/Milwaukee-Geo-Crosswalks/master/Crosswalks/2017CensusTracts_to_Neighborhoods.csv')
+
 #%%
 census_df = gpd.read_file('tl_2018_55_tract/tl_2018_55_tract.shp')
 
 census_transformed = crs_transform(census_df)
 
 #%%
-nhood_fp = r'neighborhood/neighborhood.shp'
+nhood_fp = r'tl_2018_55_tract/neighborhood.shp'
 
 nhood_shp = gpd.read_file(nhood_fp)
 
@@ -55,7 +67,12 @@ blockgroup_shp = gpd.read_file('Census_Block_Groups/Census_Block_Groups.shp')
 
 blockgroup_shp = crs_transform(blockgroup_shp)
 #%%
+cross_df['tract'] = cross_df['tract'].astype(int)
+census_transformed['GEOID'] = census_transformed['GEOID'].astype(int)
 
+cross_x_nhood_geo_sf = pd.merge(cross_df,census_transformed, how = 'inner', left_on='tract', right_on = 'GEOID')
+
+#%%
 #block_shp = gpd.read_file('')
 
 
@@ -69,6 +86,22 @@ census_transformed = crs_transform(census_df)
 
 census_info = pd.read_excel('tl_2018_55_tract/pdb2015tract_2010MRR_2017ACS_WI.xlsx', skiprows=[i for i in range(0,5)])
 
+#%%
+#NEW -----------------------------
+cross_geo_wide_df = pd.merge(cross_x_nhood_geo_sf, census_info, how='left', left_on='tract', right_on = 'GEOID')
+
+htc_cols = cross_geo_wide_df.columns[26:].to_list()
+
+#create_portion_of_agg(cross_geo_wide_df, 'pct.of.tract', htc_cols, 'tract')
+
+create_portion_of_agg(cross_geo_wide_df, 'pct.of.neighborhood', htc_cols, 'neighborhood')
+
+cross_wide_prop_df = cross_geo_wide_df[['neighborhood'] + cross_geo_wide_df.columns.to_list()[86:]]
+
+nhood_tract_weighted_df = cross_wide_prop_df.groupby(['neighborhood']).sum()
+
+#NEW -------------------------
+#%%
 #census_info['Tract_str'] = census_info['Tract10'].apply(lambda x: "{:.2f}".format(x))
 
 #nhood_tract_join['Name_str'] = nhood_tract_join['NAME'].apply(lambda x: "{:.2f}".format(float(x)))
