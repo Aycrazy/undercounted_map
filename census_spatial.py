@@ -78,7 +78,7 @@ cross_x_nhood_geo_sf = pd.merge(cross_df,census_transformed, how = 'inner', left
 
 nhood_shp = crs_transform(nhood_shp)
 
-nhood_tract_join = spatial_join_type2(census_transformed,nhood_shp)
+#nhood_tract_join = spatial_join_type2(census_transformed,nhood_shp)
 
 census_df = gpd.read_file('tl_2018_55_tract/tl_2018_55_tract.shp')
 
@@ -99,6 +99,11 @@ create_portion_of_agg(cross_geo_wide_df, 'pct.of.neighborhood', htc_cols, 'neigh
 cross_wide_prop_df = cross_geo_wide_df[['neighborhood'] + cross_geo_wide_df.columns.to_list()[86:]]
 
 nhood_tract_weighted_df = cross_wide_prop_df.groupby(['neighborhood']).sum()
+
+nhood_tract_weighted_df = pd.merge(nhood_tract_weighted_df, nhood_shp, how = 'left', left_on = 'neighborhood', right_on = 'NEIGHBORHD')
+
+nhood_tract_weighted_sf = convert_to_sf_type2(nhood_tract_weighted_df)
+
 
 #NEW -------------------------
 #%%
@@ -122,7 +127,9 @@ all_census_htc_info['NEIGHBORHD'] = all_census_htc_info.apply(lambda row: row['N
 
 all_census_htc_info = convert_to_sf_type2(all_census_htc_info[pd.notnull(all_census_htc_info.State)])
 
-all_census_htc_info.to_file("/Users/ayaspan/Documents/Personal/leaflet_census_map/nhoodxcensus.geojson", driver='GeoJSON')
+all_census_htc_info.to_file("/Users/ayaspan/Documents/Personal//undercounted_map/nhoodxcensus.geojson", driver='GeoJSON')
+
+nhood_tract_weighted_sf.to_file("/Users/ayaspan/Documents/Personal//undercounted_map/nhood_htc.geojson", driver='GeoJSON')
 
 #%%
 neighborhood_shp.to_file("neighborhood.geoJson", driver='GeoJSON')

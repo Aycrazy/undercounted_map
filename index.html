@@ -8,6 +8,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="nhoodxcensus.geojson" type="text/javascript"></script>
 <script src="neighborhood.geojson" type="text/javascript"></script>
+<script src="nhood_htc.geojson" type="text/javascript"></script>
 <script src="blockgroup.geoJson" type="text/javascript"></script>
 <!-- Create an element where the map will take place -->
 <div id="mapid"></div>
@@ -131,7 +132,19 @@
 
     // console.log(geojson.getPanes)
 
-    var geojsonLayer = L.geoJson(neighborhood, {style: nstyle});
+    var geojsonLayer = L.geoJson(nhood_htc, {style:nstyle, onEachFeature: function (feature, layer) {
+                console.log(feature.properties);
+                layer.bindPopup('<p>Hispanic Population: ' + feature.properties.Hispanic_prop_neighborhood + '</p>' +
+                     '<p>Neighborhood: ' + feature.properties.NEIGHBORHD + '</p>' +
+                    '<p>Mail Return Rate: ' + feature.properties.MRR2010_prop_neighborhood+ '%' + '</p>' +
+                    '<p>Total Under 5: ' + feature.properties.TotUnder5_prop_neighborhood + '</p>' +
+                    '<p>Ltd Eng Prof Houses: ' + feature.properties.LEPHHs_prop_neighborhood + '</p>' +
+                    '<p>No Internet: ' + feature.properties.NoInternet_prop_neighborhood + '</p>'
+                );
+                layer.bringToFront();
+
+            }
+        });
 
     var controlLayers = L.control.layers().addTo(map)
   // Add the geojson layer to the layercontrol
@@ -140,8 +153,8 @@
     var blockgroupjsonLayer = L.geoJson(blockgroup, { style: gstyle });
 
 
-    var popupLayer = L.geoJson(wisconsin_census,{style:pstyle,onEachFeature: function (feature, layer){
-            console.log(feature.properties);
+    var popupLayer = L.geoJson(wisconsin_census,{style:pstyle, onEachFeature: function (feature, layer){
+            // console.log(feature.properties);
             layer.bindPopup('<p>Tract: '+feature.properties.TRACTCE+'</p>'+
                 '<p>Hispanic Population: '+feature.properties.Hispanic+'</p>'+
                 '<p>Neighborhood: '+feature.properties.NEIGHBORHD+'</p>' +
