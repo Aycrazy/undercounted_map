@@ -137,3 +137,26 @@ neighborhood_shp.to_file("neighborhood.geoJson", driver='GeoJSON')
 #%%
 
 blockgroup_shp.to_file("blockgroup.geoJson", driver='GeoJSON')
+
+#%%
+
+#Zipcode crosswalk work
+
+zips_sf = gpd.read_file('tl_2017_55079_faces/tl_2017_55079_faces.shp')
+
+zips_shp = crs_transform(zips_sf)
+
+nhood_shp = crs_transform(nhood_shp)
+
+nhood_zips_sf2 = spatial_join_type2(zips_shp,nhood_shp)
+
+nhood_zips_sf1 = spatial_join(zips_shp,nhood_shp)
+
+
+# %%
+
+nhood_zips_sf2.to_file("nhood_x_zip.geoJson", driver='GeoJSON')
+
+nhood_zips_sf2.to_file("nhood_x_zip.shp")
+
+# %%
